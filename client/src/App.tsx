@@ -1,7 +1,13 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
+import AllTweets from "./pages/AllTweets";
+import TweetService from "./service/tweet";
 
-function App() {
+type AppProps = {
+  tweetService: TweetService;
+};
+
+function App({ tweetService }: AppProps) {
   const navigate = useNavigate();
 
   const username = "ki"; //
@@ -30,7 +36,7 @@ function App() {
         onAllTweets={onAllTweets}
       />
       <Routes>
-        <Route path="/" />
+        <Route path="/" element={<AllTweets tweetService={tweetService} />} />
         <Route path="/:username" />
       </Routes>
     </div>
