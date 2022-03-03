@@ -9,8 +9,15 @@ type Tweet = {
 
 type Tweets = Array<Tweet>;
 
-export default class TweetService {
-  tweets: Tweets = [
+interface TweetServiceInterface {
+  getTweets: (username: string) => Promise<Tweets>;
+  postTweet: (text: string) => Promise<Tweet>;
+  deleteTweet: (tweetId: number) => Promise<void>;
+  updateTweet: (tweetId: number, text: string) => Promise<Tweet>;
+}
+
+export default class TweetService implements TweetServiceInterface {
+  private tweets: Tweets = [
     {
       id: 1,
       text: "first tweet!",
