@@ -7,17 +7,17 @@ type Tweet = {
   url?: string;
 };
 
-type Tweets = Array<Tweet>;
+export type TweetsList = Array<Tweet>;
 
 interface TweetServiceInterface {
-  getTweets: (username: string) => Promise<Tweets>;
+  getTweets: (username: string) => Promise<TweetsList>;
   postTweet: (text: string) => Promise<Tweet>;
   deleteTweet: (tweetId: number) => Promise<void>;
   updateTweet: (tweetId: number, text: string) => Promise<Tweet>;
 }
 
 export default class TweetService implements TweetServiceInterface {
-  private tweets: Tweets = [
+  private tweets: TweetsList = [
     {
       id: 1,
       text: "first tweet!",
