@@ -10,7 +10,7 @@ export type Tweet = {
 export type TweetsList = Array<Tweet>;
 
 interface TweetServiceInterface {
-  getTweets: (username: string) => Promise<TweetsList>;
+  getTweets: (username?: string) => Promise<TweetsList>;
   postTweet: (text: string) => Promise<Tweet>;
   deleteTweet: (tweetId: number) => Promise<void>;
   updateTweet: (tweetId: number, text: string) => Promise<Tweet>;
@@ -28,7 +28,7 @@ export default class TweetService implements TweetServiceInterface {
     },
   ];
 
-  async getTweets(username: string) {
+  async getTweets(username?: string) {
     return username
       ? this.tweets.filter((tweet) => tweet.username === username)
       : this.tweets;
