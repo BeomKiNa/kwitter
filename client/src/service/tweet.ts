@@ -1,4 +1,4 @@
-type Tweet = {
+export type Tweet = {
   id: number;
   text: string;
   createdAt: string;
