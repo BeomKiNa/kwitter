@@ -8,8 +8,8 @@ type LoginProps = {
     name: string,
     email: string,
     url: string
-  ) => Promise<any>;
-  onLogin: (username: string, password: string) => Promise<any>;
+  ) => Promise<void>;
+  onLogin: (username: string, password: string) => Promise<void>;
 };
 
 const Login = ({ onSignUp, onLogin }: LoginProps) => {
