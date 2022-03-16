@@ -22,8 +22,8 @@ export default class TweetService implements TweetServiceInterface {
       id: 1,
       text: "first tweet!",
       createdAt: new Date().toISOString(),
-      name: "Ki",
-      username: "ki",
+      name: "Bob",
+      username: "bob",
       url: "https://images.unsplash.com/photo-1646291127886-613cd73974d6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
     },
   ];
@@ -38,8 +38,8 @@ export default class TweetService implements TweetServiceInterface {
     const tweet: Tweet = {
       id: Date.now(),
       createdAt: new Date().toISOString(),
-      name: "Ellie",
-      username: "ellie",
+      name: "Ki",
+      username: "ki",
       text,
     };
     this.tweets.push(tweet);
