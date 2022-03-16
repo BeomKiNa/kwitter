@@ -28,6 +28,8 @@ export default class TweetService implements TweetServiceInterface {
     },
   ];
 
+  constructor(private baseURL: string) {}
+
   async getTweets(username?: string) {
     return username
       ? this.tweets.filter((tweet) => tweet.username === username)

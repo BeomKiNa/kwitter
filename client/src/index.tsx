@@ -7,9 +7,10 @@ import TweetService from "./service/tweet";
 import { AuthErrorEventBus, AuthProvider } from "./context/AuthContext";
 import AuthService from "./service/auth";
 
+const baseURL = process.env.REACT_APP_BASE_URL;
 const authErrorEventBus = new AuthErrorEventBus();
 const authService = new AuthService();
-const tweetService = new TweetService();
+const tweetService = new TweetService(baseURL! as string);
 
 ReactDOM.render(
   <React.StrictMode>
