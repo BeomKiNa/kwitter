@@ -1,4 +1,22 @@
-export default class AuthService {
+export type User = {
+  username?: string;
+  token?: string;
+};
+
+interface AuthServiceInterface {
+  login: (username: string, password: string) => Promise<User>;
+  me: () => Promise<User>;
+  logout: () => Promise<void>;
+  signup: (
+    username: string,
+    password: string,
+    name: string,
+    email: string,
+    url: string
+  ) => Promise<User>;
+}
+
+export default class AuthService implements AuthServiceInterface {
   async login(username: string, password: string) {
     return {
       username: "ki",
