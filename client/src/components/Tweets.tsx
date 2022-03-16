@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import TweetService, { Tweet, TweetsList } from "../service/tweet";
 import Banner from "./Banner";
 import NewTweetForm from "./NewTweetForm";
@@ -11,14 +12,18 @@ type TweetsProps = {
   addable: boolean;
 };
 
-const Tweets = ({ tweetService, username, addable }: TweetsProps) => {
+const Tweets = memo(({ tweetService, username, addable }: TweetsProps) => {
   const [tweets, setTweets] = useState<TweetsList>([]);
   const [error, setError] = useState("");
   const navigator = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    tweetService.getTweets(username).then((tweets) => setTweets(tweets));
-  }, [tweetService, username]);
+    tweetService
+      .getTweets(username)
+      .then((tweets) => setTweets([...tweets]))
+      .catch(onError);
+  }, [tweetService, username, user]);
 
   const onCreated = (tweet: Tweet) => {
     setTweets((tweets) => [tweet, ...tweets]);
@@ -67,7 +72,7 @@ const Tweets = ({ tweetService, username, addable }: TweetsProps) => {
           <TweetCard
             key={tweet.id}
             tweet={tweet}
-            owner={tweet.username === "ki"} //
+            owner={tweet.username === (user && user.username)}
             onDelete={onDelete}
             onUpdate={onUpdate}
             onUsernameClick={onUsernameClick}
@@ -76,6 +81,6 @@ const Tweets = ({ tweetService, username, addable }: TweetsProps) => {
       </ul>
     </>
   );
-};
+});
 
 export default Tweets;
