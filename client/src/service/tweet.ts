@@ -1,3 +1,5 @@
+import HttpClient from "../network/http";
+
 export type Tweet = {
   id: number;
   text: string;
@@ -17,54 +19,28 @@ interface TweetServiceInterface {
 }
 
 export default class TweetService implements TweetServiceInterface {
-  constructor(private baseURL: string) {}
+  constructor(private http: HttpClient) {}
 
   async getTweets(username?: string) {
     const query = username ? `?username=${username}` : "";
-    const response = await fetch(`${this.baseURL}/tweets${query}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await response.json();
-    if (response.status !== 200) {
-      throw new Error(data.message);
-    }
-    return data;
+    return this.http.fetch(`/tweets${query}`, { method: "GET" });
   }
 
   async postTweet(text: string) {
-    const response = await fetch(`${this.baseURL}/tweets`, {
+    return this.http.fetch(`/tweets`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, username: "ki", name: "Ki" }),
     });
-    const data = await response.json();
-    if (response.status !== 201) {
-      throw new Error(data.message);
-    }
-    return data;
   }
 
   async deleteTweet(tweetId: number) {
-    const response = await fetch(`${this.baseURL}/tweets/${tweetId}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (response.status !== 204) {
-      throw new Error();
-    }
+    this.http.fetch(`/tweets/${tweetId}`, { method: "DELETE" });
   }
 
   async updateTweet(tweetId: number, text: string) {
-    const response = await fetch(`${this.baseURL}/tweets/${tweetId}`, {
+    return this.http.fetch(`/tweets/${tweetId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text }),
     });
-    const data = await response.json();
-    if (response.status !== 200) {
-      throw new Error(data.message);
-    }
-    return data;
   }
 }
