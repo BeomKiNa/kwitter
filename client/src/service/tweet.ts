@@ -1,3 +1,4 @@
+import TokenStorage from "../db/token";
 import HttpClient from "../network/http";
 
 export type Tweet = {
@@ -19,28 +20,43 @@ interface TweetServiceInterface {
 }
 
 export default class TweetService implements TweetServiceInterface {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private tokenStorage: TokenStorage) {}
 
   async getTweets(username?: string) {
     const query = username ? `?username=${username}` : "";
-    return this.http.fetch(`/tweets${query}`, { method: "GET" });
+    return this.http.fetch(`/tweets${query}`, {
+      method: "GET",
+      headers: this.getHeader(),
+    });
   }
 
   async postTweet(text: string) {
     return this.http.fetch(`/tweets`, {
       method: "POST",
+      headers: this.getHeader(),
       body: JSON.stringify({ text, username: "ki", name: "Ki" }),
     });
   }
 
   async deleteTweet(tweetId: number) {
-    this.http.fetch(`/tweets/${tweetId}`, { method: "DELETE" });
+    this.http.fetch(`/tweets/${tweetId}`, {
+      method: "DELETE",
+      headers: this.getHeader(),
+    });
   }
 
   async updateTweet(tweetId: number, text: string) {
     return this.http.fetch(`/tweets/${tweetId}`, {
       method: "PUT",
+      headers: this.getHeader(),
       body: JSON.stringify({ text }),
     });
+  }
+
+  private getHeader() {
+    const token = this.tokenStorage.getToken();
+    return {
+      Authorization: `Bearer ${token}`,
+    };
   }
 }

@@ -1,3 +1,6 @@
+import TokenStorage from "../db/token";
+import HttpClient from "../network/http";
+
 export type User = {
   username?: string;
   token?: string;
@@ -17,23 +20,7 @@ interface AuthServiceInterface {
 }
 
 export default class AuthService implements AuthServiceInterface {
-  async login(username: string, password: string) {
-    return {
-      username: "ki",
-      token: "abc1234",
-    };
-  }
-
-  async me() {
-    return {
-      username: "ki",
-      token: "abc1234",
-    };
-  }
-
-  async logout() {
-    return;
-  }
+  constructor(private http: HttpClient, private tokenStorage: TokenStorage) {}
 
   async signup(
     username: string,
@@ -42,9 +29,41 @@ export default class AuthService implements AuthServiceInterface {
     email: string,
     url: string
   ) {
-    return {
-      username: "ki",
-      token: "abc1234",
-    };
+    const data = await this.http.fetch("/auth/signup", {
+      method: "POST",
+      body: JSON.stringify({
+        username,
+        password,
+        name,
+        email,
+        url,
+      }),
+    });
+    this.tokenStorage.saveToken(data.token);
+    return data;
+  }
+
+  async login(username: string, password: string) {
+    const data = await this.http.fetch("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
+    this.tokenStorage.saveToken(data.token);
+    return data;
+  }
+
+  async me() {
+    const token = this.tokenStorage.getToken();
+    return this.http.fetch("/auth/me", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  }
+
+  async logout() {
+    this.tokenStorage.clearToken();
   }
 }
