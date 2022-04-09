@@ -33,17 +33,17 @@ export async function getAllByUsername(username) {
 }
 
 export async function getById(id) {
-  const found = tweets.filter((tweet) => tweet.id === id);
+  const found = tweets.find((tweet) => tweet.id === id);
   if (!found) {
     return null;
   }
-  const { username, name, url } = userRepository.findById(found.userId);
+  const { username, name, url } = await userRepository.findById(found.userId);
   return { ...found, username, name, url };
 }
 
 export async function create(text, userId) {
   const tweet = {
-    id: new Date().toString(),
+    id: Date.now().toString(),
     text,
     createdAt: new Date(),
     userId,
