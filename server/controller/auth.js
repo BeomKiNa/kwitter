@@ -5,6 +5,7 @@ import * as userRepository from "../data/auth.js";
 
 // TODO: Make it secure!
 const jwtSecretKey = "Use$297fo2DBCsTkOg$&P4TpK*pPyiSk";
+// const jwtExpiresInDays = 2; // For logout test
 const jwtExpiresInDays = "2d";
 const bcryptSaltRounds = 12;
 

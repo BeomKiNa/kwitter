@@ -1,5 +1,10 @@
+import { AuthErrorEventBus } from "../context/AuthContext";
+
 export default class HttpClient {
-  constructor(private baseURL: string) {}
+  constructor(
+    private baseURL: string,
+    private authErrorEventBus: AuthErrorEventBus
+  ) {}
 
   async fetch(url: string, options: RequestInit) {
     const res = await fetch(`${this.baseURL}${url}`, {
@@ -19,7 +24,12 @@ export default class HttpClient {
     if (res.status > 299 || res.status < 200) {
       const message: string =
         data && data.message ? data.message : "Somthing went wrong!";
-      throw Error(message);
+      const error = new Error(message);
+      if (res.status === 401) {
+        this.authErrorEventBus.notify(error);
+        return;
+      }
+      throw error;
     }
 
     return data;
