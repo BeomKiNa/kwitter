@@ -29,16 +29,33 @@ export async function updateTweet(req, res) {
     params: { id },
     body: { text },
   } = req;
-  const tweet = await tweetRepository.update(id, text);
-  if (tweet) {
-    res.status(200).json(tweet);
-  } else {
-    res.status(404).json({ message: `Tweet id(${id}) not found` });
+  const tweet = await tweetRepository.getById(id);
+  if (!tweet) {
+    return res.send(404).json({ message: `Tweet id(${id}) not found` });
   }
+
+  if (tweet.userId === req.userId) {
+    return res
+      .sendStatus(403)
+      .json({ message: `You don't have permission for that tweet.` });
+  }
+
+  const update = await tweetRepository.update(id, text);
+  res.status(200).json(update);
 }
 
 export async function deleteTweet(req, res) {
   const { id } = req.params;
+  const tweet = await tweetRepository.getById(id);
+  if (!tweet) {
+    return res.send(404).json({ message: `Tweet id(${id}) not found` });
+  }
+
+  if (tweet.userId === req.userId) {
+    return res
+      .sendStatus(403)
+      .json({ message: `You don't have permission for that tweet.` });
+  }
   await tweetRepository.remove(id);
   res.sendStatus(204);
 }
