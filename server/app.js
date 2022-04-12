@@ -5,6 +5,7 @@ import helmet from "helmet";
 import "express-async-error";
 import tweetsRouter from "./router/tweets.js";
 import authRouter from "./router/auth.js";
+import { config } from "./config.js";
 
 const app = express();
 
@@ -24,4 +25,6 @@ app.use((error, req, res, next) => {
   console.error(error);
   res.sendStatus(500);
 });
-app.listen(8080, () => console.log("Start Server 🚀: http://localhost:8080"));
+app.listen(config.host.port, () =>
+  console.log(`Start Server 🚀: http://localhost:${config.host.port}`)
+);
