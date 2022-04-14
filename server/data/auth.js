@@ -7,6 +7,14 @@ let users = [
     email: "bob@gmail.com",
     url: "https://images.unsplash.com/photo-1648919065647-5cca0d3aaca0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80",
   },
+  {
+    id: "2",
+    username: "jamie",
+    password: "$2b$12$/A5N.1rKwR1kcAuIQUgLUe4EfXjoQXv3Id.NnOaSFmkeqobHFTexe", // password: abcd1234
+    name: "Jamie",
+    email: "jamie@gmail.com",
+    url: "https://images.unsplash.com/photo-1648919065647-5cca0d3aaca0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80",
+  },
 ];
 
 export async function findByUsername(username) {
