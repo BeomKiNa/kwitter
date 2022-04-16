@@ -1,5 +1,6 @@
 import TokenStorage from "../db/token";
 import HttpClient from "../network/http";
+import Socket from "../network/socket";
 
 export type Tweet = {
   id: number;
@@ -20,7 +21,11 @@ interface TweetServiceInterface {
 }
 
 export default class TweetService implements TweetServiceInterface {
-  constructor(private http: HttpClient, private tokenStorage: TokenStorage) {}
+  constructor(
+    private http: HttpClient,
+    private tokenStorage: TokenStorage,
+    private socket: Socket
+  ) {}
 
   async getTweets(username?: string) {
     const query = username ? `?username=${username}` : "";
@@ -34,7 +39,7 @@ export default class TweetService implements TweetServiceInterface {
     return this.http.fetch(`/tweets`, {
       method: "POST",
       headers: this.getHeader(),
-      body: JSON.stringify({ text, username: "ki", name: "Ki" }),
+      body: JSON.stringify({ text }),
     });
   }
 
@@ -58,5 +63,9 @@ export default class TweetService implements TweetServiceInterface {
     return {
       Authorization: `Bearer ${token}`,
     };
+  }
+
+  onSync(callback: (tweet: Tweet) => void) {
+    return this.socket.onSync("tweets", callback);
   }
 }

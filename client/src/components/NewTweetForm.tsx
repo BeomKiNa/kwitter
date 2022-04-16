@@ -4,14 +4,9 @@ import TweetService, { Tweet } from "../service/tweet";
 type NewTweetFormProps = {
   tweetService: TweetService;
   onError: (error: Error) => void;
-  onCreated: (tweet: Tweet) => void;
 };
 
-const NewTweetForm = ({
-  tweetService,
-  onError,
-  onCreated,
-}: NewTweetFormProps) => {
+const NewTweetForm = ({ tweetService, onError }: NewTweetFormProps) => {
   const [tweet, setTweet] = useState("");
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -20,7 +15,6 @@ const NewTweetForm = ({
       .postTweet(tweet)
       .then((created) => {
         setTweet("");
-        onCreated(created);
       })
       .catch(onError);
   };
