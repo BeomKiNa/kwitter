@@ -1,17 +1,17 @@
-import MongoDb from "mongodb";
+import Mongoose from "mongoose";
 import { config } from "../config.js";
 
 const {
   db: { host },
 } = config;
 
-let db;
 export async function connectDB() {
-  return MongoDb.MongoClient.connect(host).then((client) => {
-    db = client.db();
-  });
+  return Mongoose.connect(host);
 }
 
+// TODO: Delete blow
+
+let db;
 export function getUsers() {
   return db.collection("users");
 }
