@@ -29,7 +29,8 @@ app.use((error, req, res, next) => {
 });
 
 connectDB()
-  .then(() => {
+  .then((db) => {
+    console.log("init!", db);
     const server = app.listen(config.host.port, () =>
       console.log(`Start Server 🚀: http://localhost:${config.host.port}`)
     );

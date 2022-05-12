@@ -1,68 +1,82 @@
-import { ObjectId } from "mongodb";
-import * as userRepository from "./auth.js";
-import { getTweets } from "../db/database.js";
+import SQ from "sequelize";
+import { sequelize } from "../db/database.js";
+import { User } from "./auth.js";
 
-// NOSQL (정보의 중복 > 관계)
-// 모든 사용자가 트윗을 쿼리하는 횟수 > 사용자가 사용자의 정보를 업데이트 하는 횟수
-// 프로필 DB
-// 사용자의 문서 DB: 서버1, 서버2, 서버3
-// 관계형 조인쿼리의 성능이 좋지 않다.
+const DataTypes = SQ.DataTypes;
+const Sequelize = SQ.Sequelize;
 
-// SQL: 관계형
-// 조인쿼리의 성능이 좋다.
+const Tweet = sequelize.define("tweet", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  text: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+});
+
+Tweet.belongsTo(User);
+
+const INCLUDE_USER = {
+  attributes: [
+    "id",
+    "text",
+    "createdAt",
+    "userId",
+    [Sequelize.col("user.name"), "name"],
+    [Sequelize.col("user.username"), "username"],
+    [Sequelize.col("user.url"), "url"],
+  ],
+  include: {
+    model: User,
+    attributes: [],
+  },
+};
+
+const ORDER_DESC = {
+  order: [["createdAt", "DESC"]],
+};
 
 export async function getAll() {
-  return getTweets().find().sort({ createdAt: -1 }).toArray().then(mapTweets);
+  return Tweet.findAll({ ...INCLUDE_USER, ...ORDER_DESC });
 }
 
 export async function getAllByUsername(username) {
-  return getTweets()
-    .find({ username })
-    .sort({ createdAt: -1 })
-    .toArray()
-    .then(mapTweets);
+  return Tweet.findAll({
+    ...INCLUDE_USER,
+    ...ORDER_DESC,
+    include: {
+      ...INCLUDE_USER.include,
+      where: { username },
+    },
+  });
 }
 
 export async function getById(id) {
-  return getTweets()
-    .findOne({ _id: new ObjectId(id) })
-    .then(mapOptionalTweet);
+  return Tweet.findOne({
+    where: { id },
+    ...INCLUDE_USER,
+  });
 }
 
 export async function create(text, userId) {
-  const { name, username, url } = await userRepository.findById(userId);
-  const tweet = {
-    text,
-    createdAt: new Date(),
-    userId,
-    name,
-    username,
-    url,
-  };
-  return getTweets()
-    .insertOne(tweet)
-    .then((data) => mapOptionalTweet({ ...tweet, _id: data.insertedId }));
+  return Tweet.create({ text, userId }).then((data) =>
+    getById(data.dataValues.id)
+  );
 }
 
 export async function update(id, text) {
-  return getTweets()
-    .findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: { text } },
-      { returnDocument: "after" }
-    )
-    .then((result) => result.value)
-    .then(mapOptionalTweet);
+  return Tweet.findByPk(id, INCLUDE_USER).then((tweet) => {
+    tweet.text = text;
+    return tweet.save();
+  });
 }
 
 export async function remove(id) {
-  return getTweets().deleteOne({ _id: new ObjectId(id) });
-}
-
-function mapOptionalTweet(tweet) {
-  return tweet ? { ...tweet, id: tweet._id.toString() } : tweet;
-}
-
-function mapTweets(tweets) {
-  return tweets.map(mapOptionalTweet);
+  return Tweet.findByPk(id).then((tweet) => {
+    tweet.destroy();
+  });
 }
