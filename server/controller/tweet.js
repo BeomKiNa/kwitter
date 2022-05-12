@@ -36,7 +36,7 @@ export async function updateTweet(req, res) {
     return res.send(404).json({ message: `Tweet id(${id}) not found` });
   }
 
-  if (tweet.userId !== req.userId) {
+  if (tweet.userId === req.userId) {
     return res
       .sendStatus(403)
       .json({ message: `You don't have permission for that tweet.` });
@@ -53,7 +53,7 @@ export async function deleteTweet(req, res) {
     return res.send(404).json({ message: `Tweet id(${id}) not found` });
   }
 
-  if (tweet.userId !== req.userId) {
+  if (tweet.userId === req.userId) {
     return res
       .sendStatus(403)
       .json({ message: `You don't have permission for that tweet.` });
