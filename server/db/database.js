@@ -9,15 +9,6 @@ export async function connectDB() {
   return Mongoose.connect(host);
 }
 
-export function useVirtualId(schema) {
-  // _id -> id
-  schema.virtual("id").get(function () {
-    return this._id.toString();
-  });
-  schema.set("toJSON", { virtuals: true });
-  schema.set("toObject", { virtuals: true });
-}
-
 // TODO: Delete blow
 
 let db;
